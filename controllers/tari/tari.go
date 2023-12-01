@@ -1,0 +1,132 @@
+package tari
+
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"main/helpers"
+	"main/models/database"
+	"main/models/tari"
+	"strconv"
+	"strings"
+
+	"github.com/gin-gonic/gin"
+)
+
+func GetTari() string {
+	var selectStatement string = "SELECT * FROM tari"
+
+	if rows, err := helpers.GetQueryResults(database.Db, selectStatement); err != nil {
+		log.Println(err)
+	} else {
+		var tari_array = make([]tari.Tara, 0)
+		for rows.Next() {
+			var id int
+			var nume string
+			var lat float64
+			var lon float64
+			if err := rows.Scan(&id, &nume, &lat, &lon); err != nil {
+				log.Println(err)
+			} else {
+				tara := tari.Tara{Id: id, Nume: nume, Lat: lat, Lon: lon}
+				tari_array = append(tari_array, tara)
+			}
+		}
+		if tari_json, err := json.Marshal(tari_array); err != nil {
+			log.Println(err)
+		} else {
+			return string(tari_json)
+		}
+	}
+	return "[]"
+}
+
+func PostTara(c *gin.Context) int {
+	var tara_var tari.Tara
+	if err := c.BindJSON(&tara_var); err != nil {
+		log.Println(err)
+		return -1
+	}
+
+	var insertStatement string = "INSERT INTO tari(nume_tara, latitudine, longitudine) VALUES($1, $2, $3)"
+
+	if _, err := helpers.ExecuteStatement(database.Db, insertStatement, tara_var.Nume, tara_var.Lat, tara_var.Lon); err != nil {
+		log.Println(err)
+	} else {
+		insertStatement = "SELECT id FROM tari WHERE nume_tara = $1"
+		if rows, err := helpers.GetQueryResults(database.Db, insertStatement, tara_var.Nume); err != nil {
+			log.Println(err)
+		} else {
+			if rows.Next() {
+				var id int
+				if err := rows.Scan(&id); err != nil {
+					log.Println(err)
+				} else {
+					return id
+				}
+			}
+		}
+	}
+	return -1
+}
+
+func PutTara(c *gin.Context) int {
+	var tara_var tari.Tara
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		log.Println(err)
+		return 400
+	}
+	if err := c.BindJSON(&tara_var); err != nil {
+		log.Println(err)
+		return 400
+	}
+
+	var selectStatement string = "SELECT * FROM tari WHERE id = $1"
+	if rows, err := helpers.GetQueryResults(database.Db, selectStatement, id); err != nil {
+		fmt.Println(id);
+		log.Println(err)
+	} else {
+		if !rows.Next() {
+			return 404
+		}
+	}
+
+	var updateStatement string = "UPDATE tari SET nume_tara = $1, latitudine = $2, longitudine = $3, id = $4 WHERE id = $5"
+
+	if _, err := helpers.ExecuteStatement(database.Db, updateStatement, tara_var.Nume, tara_var.Lat, tara_var.Lon, tara_var.Id, id); err != nil {
+		log.Println(err)
+	} else {
+		return 200
+	}
+	return 400
+}
+
+func DeleteTara(c *gin.Context) int {
+	idStr := c.Param("id")
+	idStr = strings.TrimPrefix(idStr, ":")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		log.Println(err)
+		return 400
+	}
+
+	var selectStatement string = "SELECT * FROM tari WHERE id = $1"
+	if rows, err := helpers.GetQueryResults(database.Db, selectStatement, id); err != nil {
+		log.Println(err)
+	} else {
+		if !rows.Next() {
+			return 404
+		}
+	}
+
+	var deleteStatement string = "DELETE FROM tari WHERE id = $1"
+	if _, err := helpers.ExecuteStatement(database.Db, deleteStatement, id); err != nil {
+		log.Println(err)
+	} else {
+		return 200
+	}
+	return 400
+}
+
