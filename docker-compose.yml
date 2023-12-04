@@ -1,0 +1,52 @@
+version: "3.1"
+services:
+  go-api:
+    container_name: go-api
+    image: thisk8brd/go-todo:dev
+    build:
+      context: .
+      target: dev
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
+      - "2345:2345"
+    networks:
+      - go-todo-network
+
+  postgres: # postgresql
+    image: postgres:13
+    environment:
+      POSTGRES_USER: admindb
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init_scripts:/docker-entrypoint-initdb.d
+    networks:
+      - databsse-network
+
+  pgadmin: # pgadmin4
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 8001
+    ports:
+      - "8001:8001"
+    depends_on:
+      - postgres
+    networks:
+      - databsse-network
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+volumes:
+  postgres-data:
+  pgadmin-data:
+
+networks:
+  databsse-network:
+    driver: bridge
