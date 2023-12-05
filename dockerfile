@@ -14,4 +14,4 @@ WORKDIR /root/
 
 COPY --from=builder app .
 
-ENTRYPOINT ./app -host=postgres -port=5432 -user=admindb -password=password -dbname=postgres -sslmode=true
+ENTRYPOINT ./app -host=${DB_HOST} -port=${DB_PORT} -user=${DB_USER} -password=${DB_PASSWORD} -dbname=${DB_NAME}
