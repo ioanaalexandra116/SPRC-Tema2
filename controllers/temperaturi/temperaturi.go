@@ -186,7 +186,6 @@ func GetTemperaturiByOras(c *gin.Context) string {
 	if params["until"] == nil {
 		params["until"] = append(params["until"], "")
 	}
-	log.Println(params)
 	from := params["from"][0]
 	until := params["until"][0]
 	if from != "" && until != "" {
@@ -299,7 +298,7 @@ func PostTemperatura(c *gin.Context) (int, int) {
 		}
 	}
 
-	insertStatement = "INSERT INTO temperaturi(id_oras, valoare, timestamp::date) VALUES($1, $2, $3)"
+	insertStatement = "INSERT INTO temperaturi(id_oras, valoare, timestamp) VALUES($1, $2, $3)"
 	timezone := time.Now().Format("2006-01-02 15:04:05")
 	if _, err := helpers.ExecuteStatement(database.Db, insertStatement, temperatura.IdOras, temperatura.Valoare, timezone); err != nil {
 		log.Println(err)

@@ -54,7 +54,7 @@ PGPASSWORD=password psql -U admindb -d postgres -c "
                                         id bigint NOT NULL,
                                         id_oras bigint NOT NULL,
                                         valoare double precision NOT NULL,
-                                        timestamp timestamp NOT NULL,
+                                        timestamp text NOT NULL,
                                         CONSTRAINT id_valid CHECK (id > 0),
                                         CONSTRAINT temperaturi_pkey PRIMARY KEY (id),
                                         CONSTRAINT temperaturi_id_oras_fkey FOREIGN KEY (id_oras) REFERENCES public.orase(id) ON DELETE CASCADE,

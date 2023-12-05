@@ -5,17 +5,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    volumes:
-      - go-app:/app
     ports:
       - "6000:6000"
     depends_on:
       - postgres
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:6000/health"]
-      interval: 10s
-      timeout: 10s
-      retries: 3
     networks:
       - api-network
       - communication-network
@@ -45,16 +38,15 @@ services:
       - "8001:8001"
     depends_on:
       - postgres
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
     networks:
       - database-network
       - communication-network
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
 
 volumes:
   postgres-data:
   pgadmin-data:
-  go-app:
 
 networks:
   database-network:

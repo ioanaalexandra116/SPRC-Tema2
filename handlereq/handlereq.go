@@ -13,17 +13,6 @@ import (
 func HandleRequests() {
 	router := gin.Default()
 
-	log.Println("Server started on: http://localhost:6000")
-
-	router.Use(func(c *gin.Context) {
-        log.Printf("Received request: %s %s", c.Request.Method, c.Request.URL)
-        c.Next()
-    })
-
-	router.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{"status": "ok"})
-	})
-
 	router.GET("/api/countries", func(c *gin.Context) {
 		c.JSON(200, json.RawMessage(tari.GetTari()))
 	})
