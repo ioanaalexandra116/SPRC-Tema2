@@ -1,14 +1,17 @@
-FROM golang:1.21.4
+FROM golang:alpine as builder
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
+COPY ../../.. .
+
 RUN go mod download
 
-COPY *.go ./
+RUN CGO_ENABLED=0 GOOS=linux go build -o app .
 
-RUN go build -o /go-api
+FROM alpine:latest
 
-EXPOSE 6000
+WORKDIR /root/
 
-CMD ["/go-api"]
+COPY --from=builder app .
+
+ENTRYPOINT ./app -host=postgres -port=5432 -user=admindb -password=password -dbname=postgres -sslmode=true

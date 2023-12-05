@@ -2,17 +2,23 @@ version: "3.1"
 services:
   go-api:
     container_name: go-api
-    image: thisk8brd/go-todo:dev
     build:
       context: .
-      target: dev
+      dockerfile: Dockerfile
     volumes:
-      - .:/app
+      - go-app:/app
     ports:
-      - "5000:5000"
-      - "2345:2345"
+      - "6000:6000"
+    depends_on:
+      - postgres
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6000/health"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
     networks:
-      - go-todo-network
+      - api-network
+      - communication-network
 
   postgres: # postgresql
     image: postgres:13
@@ -26,7 +32,8 @@ services:
       - postgres-data:/var/lib/postgresql/data
       - ./init_scripts:/docker-entrypoint-initdb.d
     networks:
-      - databsse-network
+      - database-network
+      - communication-network
 
   pgadmin: # pgadmin4
     image: dpage/pgadmin4
@@ -39,14 +46,20 @@ services:
     depends_on:
       - postgres
     networks:
-      - databsse-network
+      - database-network
+      - communication-network
     volumes:
       - pgadmin-data:/var/lib/pgadmin
 
 volumes:
   postgres-data:
   pgadmin-data:
+  go-app:
 
 networks:
-  databsse-network:
+  database-network:
+    driver: bridge
+  api-network:
+    driver: bridge
+  communication-network:
     driver: bridge

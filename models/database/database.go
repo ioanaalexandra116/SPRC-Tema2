@@ -8,7 +8,7 @@ import (
 	_ "github.com/lib/pq"
 )
 const (
-  host     = "localhost"
+  host     = "postgres"
   port     = 5432
   user     = "admindb"
   password = "password"
