@@ -22,8 +22,8 @@ func GetTari() string {
 		for rows.Next() {
 			var id int
 			var nume string
-			var lat float64
-			var lon float64
+			var lat *float64
+			var lon *float64
 			if err := rows.Scan(&id, &nume, &lat, &lon); err != nil {
 				log.Println(err)
 			} else {
@@ -44,6 +44,10 @@ func PostTara(c *gin.Context) int {
 	var tara_var tari.Tara
 	if err := c.BindJSON(&tara_var); err != nil {
 		log.Println(err)
+		return 400
+	}
+
+	if tara_var.Nume == "" || tara_var.Lat == nil || tara_var.Lon == nil {
 		return 400
 	}
 
@@ -85,6 +89,10 @@ func PutTara(c *gin.Context) int {
 		return 400
 	}
 
+	if tara_var.Nume == "" || tara_var.Lat == nil || tara_var.Lon == nil || tara_var.Id == 0 {
+		return 400
+	}
+
 	var selectStatement string = "SELECT * FROM tari WHERE id = $1"
 	if rows, err := helpers.GetQueryResults(database.Db, selectStatement, id); err != nil {
 		log.Println(err)
@@ -94,9 +102,9 @@ func PutTara(c *gin.Context) int {
 		}
 	}
 
-	var updateStatement string = "UPDATE tari SET nume_tara = $1, latitudine = $2, longitudine = $3, id = $4 WHERE id = $5"
+	var updateStatement string = "UPDATE tari SET nume_tara = $1, latitudine = $2, longitudine = $3 WHERE id = $4"
 
-	if _, err := helpers.ExecuteStatement(database.Db, updateStatement, tara_var.Nume, tara_var.Lat, tara_var.Lon, tara_var.Id, id); err != nil {
+	if _, err := helpers.ExecuteStatement(database.Db, updateStatement, tara_var.Nume, tara_var.Lat, tara_var.Lon, id); err != nil {
 		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") || strings.Contains(err.Error(), "violates foreign key constraint") {
 			return 409
 		}

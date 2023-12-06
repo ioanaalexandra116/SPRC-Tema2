@@ -22,8 +22,8 @@ func GetOrase() string {
 			var id int
 			var id_tara int
 			var nume string
-			var lat float64
-			var lon float64
+			var lat *float64
+			var lon *float64
 			if err := rows.Scan(&id, &id_tara, &nume, &lat, &lon); err != nil {
 				log.Println(err)
 			} else {
@@ -50,21 +50,21 @@ func GetOraseByTara(c *gin.Context) string {
 	if rows, err := helpers.GetQueryResults(database.Db, selectStatement, id); err != nil {
 		log.Println(err)
 	} else {
-		var tari_array = make([]orase.Oras, 0)
+		var orase_array = make([]orase.Oras, 0)
 		for rows.Next() {
 			var id int
 			var id_tara int
 			var nume string
-			var lat float64
-			var lon float64
+			var lat *float64
+			var lon *float64
 			if err := rows.Scan(&id, &id_tara, &nume, &lat, &lon); err != nil {
 				log.Println(err)
 			} else {
 				tara := orase.Oras{Id: id, IdTara: id_tara, Nume: nume, Lat: lat, Lon: lon}
-				tari_array = append(tari_array, tara)
+				orase_array = append(orase_array, tara)
 			}
 		}
-		if tari_json, err := json.Marshal(tari_array); err != nil {
+		if tari_json, err := json.Marshal(orase_array); err != nil {
 			log.Println(err)
 		} else {
 			return string(tari_json)
@@ -77,6 +77,10 @@ func PostOras(c *gin.Context) (int, int) {
 	var oras_var orase.Oras
 	if err := c.BindJSON(&oras_var); err != nil {
 		log.Println(err)
+		return -1, 400
+	}
+
+	if oras_var.Nume == "" || oras_var.Lat == nil || oras_var.Lon == nil || oras_var.IdTara == 0 {
 		return -1, 400
 	}
 
@@ -129,12 +133,16 @@ func PutOras(c *gin.Context) int {
 		return 400
 	} else {
 		if !rows.Next() {
-			return 404
+			return 4040
 		}
 	}
 
 	if err := c.BindJSON(&oras_var); err != nil {
 		log.Println(err)
+		return 400
+	}
+
+	if oras_var.Nume == "" || oras_var.Lat == nil || oras_var.Lon == nil || oras_var.IdTara == 0 || oras_var.Id == 0 {
 		return 400
 	}
 
@@ -148,8 +156,8 @@ func PutOras(c *gin.Context) int {
 		}
 	}
 
-	insertStatement = "UPDATE orase SET id = $1, id_tara = $2, nume_oras = $3, latitudine = $4, longitudine = $5 WHERE id = $6"
-	if _, err := helpers.ExecuteStatement(database.Db, insertStatement, oras_var.Id, oras_var.IdTara, oras_var.Nume, oras_var.Lat, oras_var.Lon, id); err != nil {
+	insertStatement = "UPDATE orase SET id_tara = $1, nume_oras = $2, latitudine = $3, longitudine = $4 WHERE id = $5"
+	if _, err := helpers.ExecuteStatement(database.Db, insertStatement, oras_var.IdTara, oras_var.Nume, oras_var.Lat, oras_var.Lon, id); err != nil {
 		log.Println(err)
 		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
 			return 409

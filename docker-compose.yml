@@ -1,18 +1,5 @@
 version: "3.1"
 services:
-  go-api:
-    container_name: go-api
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "6000:6000"
-    depends_on:
-      - postgres
-    networks:
-      - api-network
-      - communication-network
-
   postgres: # postgresql
     image: postgres:13
     environment:
@@ -42,6 +29,19 @@ services:
       - pgadmin-data:/var/lib/pgadmin
     networks:
       - database-network
+      - communication-network
+  
+  go-api:
+    container_name: go-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "6000:6000"
+    depends_on:
+      - postgres
+    networks:
+      - api-network
       - communication-network
 
 volumes:
