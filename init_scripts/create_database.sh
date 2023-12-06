@@ -1,6 +1,5 @@
 #!/bin/bash
-
-PGPASSWORD=password psql -U admindb -d postgres -c "
+PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "
                                      -- PostgreSQL database dump
                                      --
 

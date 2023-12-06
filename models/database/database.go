@@ -3,17 +3,18 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"os"
 	"log"
 	"time"
 
 	_ "github.com/lib/pq"
 )
 const (
-  host     = "postgres"
-  port     = 5432
-  user     = "admindb"
-  password = "password"
-  dbname   = "postgres"
+  host     = "DB_HOST"
+  port     = "DB_PORT"
+  user     = "DB_USER"
+  password = "DB_PASSWORD"
+  dbname   = "DB_NAME"
   sslmode  = "require"
   retryInterval = time.Second * 2
   maxRetries = 10
@@ -21,8 +22,21 @@ const (
 
 var Db *sql.DB
 
+func getEnvOrDefault(key, defaultValue string) string {
+	value, exists := os.LookupEnv(key)
+	if !exists {
+		return defaultValue
+	}
+	return value
+}
+
 func Start() *sql.DB {
-	postgresqlDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	host := getEnvOrDefault(host, "localhost")
+	port := getEnvOrDefault(port, "5432")
+	user := getEnvOrDefault(user, "postgres")
+	password := getEnvOrDefault(password, "postgres")
+	dbname := getEnvOrDefault(dbname, "postgres")
+	postgresqlDbInfo := fmt.Sprintf("host=%s port=%s user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
 	for i := 0; i < maxRetries; i++ {
 		Db, err := sql.Open("postgres", postgresqlDbInfo)
