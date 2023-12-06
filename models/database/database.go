@@ -39,6 +39,10 @@ func Start() *sql.DB {
 	postgresqlDbInfo := fmt.Sprintf("host=%s port=%s user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
 	for i := 0; i < maxRetries; i++ {
+		if Db != nil {
+			_ = Db.Close()
+		}
+		
 		Db, err := sql.Open("postgres", postgresqlDbInfo)
 		if err != nil {
 			log.Printf("Error connecting to database (attempt %d/%d): %v", i+1, maxRetries, err)

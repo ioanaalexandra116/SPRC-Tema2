@@ -1,4 +1,5 @@
 #!/bin/bash
+PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "ALTER SYSTEM SET max_connections = 500;"
 PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "
                                      -- PostgreSQL database dump
                                      --
@@ -17,6 +18,7 @@ PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "
                                      SET default_tablespace = '';
 
                                      SET default_table_access_method = heap;
+                                     
                                      --
                                      -- Name: tari; Type: TABLE; Schema: public; Owner: admindb
                                      --
@@ -32,7 +34,7 @@ PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "
                                         CONSTRAINT tari_nume_tara_key UNIQUE (nume_tara)
                                     );
 
-                                     ALTER TABLE public.tari OWNER TO admindb;
+                                    ALTER TABLE public.tari OWNER TO admindb;
 
                                     CREATE TABLE public.orase (
                                         id bigint NOT NULL,

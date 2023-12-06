@@ -303,7 +303,7 @@ func PostTemperatura(c *gin.Context) (int, int) {
 	}
 
 	insertStatement = "INSERT INTO temperaturi(id_oras, valoare, timestamp) VALUES($1, $2, $3)"
-	timezone := time.Now().Format("2006-01-02 15:04:05.999999999")
+	timezone := time.Now().Format("2006-01-02 15:04:05.99")
 	if _, err := helpers.ExecuteStatement(database.Db, insertStatement, temperatura.IdOras, temperatura.Valoare, timezone); err != nil {
 		log.Println(err)
 		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
