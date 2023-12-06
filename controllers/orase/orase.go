@@ -7,6 +7,7 @@ import (
 	"main/models/database"
 	"main/models/orase"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -85,13 +86,16 @@ func PostOras(c *gin.Context) (int, int) {
 		return -1, 400
 	} else {
 		if !rows.Next() {
-			return -1, 409
+			return -1, 404
 		}
 	}
 
 	insertStatement = "INSERT INTO orase(id_tara, nume_oras, latitudine, longitudine) VALUES($1, $2, $3, $4)"
 	if _, err := helpers.ExecuteStatement(database.Db, insertStatement, oras_var.IdTara, oras_var.Nume, oras_var.Lat, oras_var.Lon); err != nil {
 		log.Println(err)
+		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+			return -1, 409
+		}
 	} else {
 		insertStatement = "SELECT id FROM orase WHERE nume_oras = $1 AND id_tara = $2"
 		if rows, err := helpers.GetQueryResults(database.Db, insertStatement, oras_var.Nume, oras_var.IdTara); err != nil {
@@ -140,13 +144,16 @@ func PutOras(c *gin.Context) int {
 		return 400
 	} else {
 		if !rows.Next() {
-			return 409
+			return 404
 		}
 	}
 
-	insertStatement = "UPDATE orase SET id_tara = $1, nume_oras = $2, latitudine = $3, longitudine = $4 WHERE id = $5"
-	if _, err := helpers.ExecuteStatement(database.Db, insertStatement, oras_var.IdTara, oras_var.Nume, oras_var.Lat, oras_var.Lon, id); err != nil {
+	insertStatement = "UPDATE orase SET id = $1, id_tara = $2, nume_oras = $3, latitudine = $4, longitudine = $5 WHERE id = $6"
+	if _, err := helpers.ExecuteStatement(database.Db, insertStatement, oras_var.Id, oras_var.IdTara, oras_var.Nume, oras_var.Lat, oras_var.Lon, id); err != nil {
 		log.Println(err)
+		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+			return 409
+		}
 		return 400
 	}
 	return 200

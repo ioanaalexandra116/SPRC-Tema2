@@ -29,3 +29,19 @@ docker compose -f docker-compose.yml up --volumes # shuts down the container and
 ```
 
 ## Features (what you can do)
+- add a country
+- display all countries
+- modify/delete an existing country
+- add a city to an existing country
+- display all cities
+- display all cities from a country
+- modify/delete an existing city
+- add a temperature in Celsius degrees to an existing city
+- display all temperatures
+- display temperatures based on:
+    - longitude
+    - latitude
+    - date (from ... until ...)
+    - city
+    - country
+- modify/delete an existing temperature

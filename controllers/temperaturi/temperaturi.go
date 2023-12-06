@@ -294,7 +294,7 @@ func PostTemperatura(c *gin.Context) (int, int) {
 		return -1, 400
 	} else {
 		if !rows.Next() {
-			return -1, 409
+			return -1, 404
 		}
 	}
 
@@ -302,8 +302,11 @@ func PostTemperatura(c *gin.Context) (int, int) {
 	timezone := time.Now().Format("2006-01-02 15:04:05")
 	if _, err := helpers.ExecuteStatement(database.Db, insertStatement, temperatura.IdOras, temperatura.Valoare, timezone); err != nil {
 		log.Println(err)
+		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+			return -1, 409
+		}
 	} else {
-		insertStatement = "SELECT id FROM temperaturi WHERE id_oras = $1 AND timestamp::date = $2"
+		insertStatement = "SELECT id FROM temperaturi WHERE id_oras = $1 AND timestamp = $2"
 		if rows, err := helpers.GetQueryResults(database.Db, insertStatement, temperatura.IdOras, timezone);
 		err != nil {
 			log.Println(err)
@@ -352,13 +355,16 @@ func PutTemperatura(c *gin.Context) int {
 		return 400
 	} else {
 		if !rows.Next() {
-			return 409
+			return 404
 		}
 	}
 
 	insertStatement = "UPDATE temperaturi SET id = $1, id_oras = $2, valoare = $3 WHERE id = $4"
 	if _, err := helpers.ExecuteStatement(database.Db, insertStatement, temperatura.Id, temperatura.IdOras, temperatura.Valoare, id); err != nil {
 		log.Println(err)
+		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+			return 409
+		}
 		return 400
 	}
 	return 200

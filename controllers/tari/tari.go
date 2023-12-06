@@ -1,8 +1,7 @@
 package tari
 
 import (
-	"encoding/json"
-	"fmt"
+	"encoding/json"	
 	"log"
 	"main/helpers"
 	"main/models/database"
@@ -45,13 +44,16 @@ func PostTara(c *gin.Context) int {
 	var tara_var tari.Tara
 	if err := c.BindJSON(&tara_var); err != nil {
 		log.Println(err)
-		return -1
+		return 400
 	}
 
 	var insertStatement string = "INSERT INTO tari(nume_tara, latitudine, longitudine) VALUES($1, $2, $3)"
 
 	if _, err := helpers.ExecuteStatement(database.Db, insertStatement, tara_var.Nume, tara_var.Lat, tara_var.Lon); err != nil {
 		log.Println(err)
+		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+			return 409
+		}
 	} else {
 		insertStatement = "SELECT id FROM tari WHERE nume_tara = $1"
 		if rows, err := helpers.GetQueryResults(database.Db, insertStatement, tara_var.Nume); err != nil {
@@ -67,7 +69,7 @@ func PostTara(c *gin.Context) int {
 			}
 		}
 	}
-	return -1
+	return 400
 }
 
 func PutTara(c *gin.Context) int {
@@ -85,7 +87,6 @@ func PutTara(c *gin.Context) int {
 
 	var selectStatement string = "SELECT * FROM tari WHERE id = $1"
 	if rows, err := helpers.GetQueryResults(database.Db, selectStatement, id); err != nil {
-		fmt.Println(id);
 		log.Println(err)
 	} else {
 		if !rows.Next() {
@@ -96,7 +97,9 @@ func PutTara(c *gin.Context) int {
 	var updateStatement string = "UPDATE tari SET nume_tara = $1, latitudine = $2, longitudine = $3, id = $4 WHERE id = $5"
 
 	if _, err := helpers.ExecuteStatement(database.Db, updateStatement, tara_var.Nume, tara_var.Lat, tara_var.Lon, tara_var.Id, id); err != nil {
-		log.Println(err)
+		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") || strings.Contains(err.Error(), "violates foreign key constraint") {
+			return 409
+		}
 	} else {
 		return 200
 	}

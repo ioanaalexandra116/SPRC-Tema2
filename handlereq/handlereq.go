@@ -12,6 +12,7 @@ import (
 
 func HandleRequests() {
 	router := gin.Default()
+	gin.SetMode(gin.ReleaseMode)
 
 	router.GET("/api/countries", func(c *gin.Context) {
 		c.JSON(200, json.RawMessage(tari.GetTari()))
@@ -20,13 +21,15 @@ func HandleRequests() {
 	router.POST("/api/countries", func(c *gin.Context) {
 		if c.Request.Header.Get("Content-Type") == "application/json" {
 			res := tari.PostTara(c)
-			if res != -1 {
+			if res != 409 && res != 400 {
 				c.JSON(201, gin.H{"id": res})
+			} else if res == 409 {
+				c.JSON(res, "Conflict")
 			} else {
-				c.JSON(400, "Bad request")
+				c.JSON(res, "Bad request")
 			}
 		} else {
-			c.JSON(409, "Bad request")
+			c.JSON(400, "Bad request")
 		}
 	})
 
@@ -35,6 +38,8 @@ func HandleRequests() {
 			res := tari.PutTara(c)
 			if res == 200 {
 				c.JSON(res, "Country updated")
+			} else if res == 409 {
+				c.JSON(res, "Conflict")
 			} else {
 				c.JSON(res, "Bad request")
 			}
@@ -47,6 +52,8 @@ func HandleRequests() {
 		res := tari.DeleteTara(c)
 		if res == 200 {
 			c.JSON(res, "Country deleted")
+		} else if res == 404 {
+			c.JSON(res, "Not found")
 		} else {
 			c.JSON(res, "Bad request")
 		}
@@ -65,6 +72,10 @@ func HandleRequests() {
 			res, code := orase.PostOras(c)
 			if res != -1 {
 				c.JSON(code, gin.H{"id": res})
+			} else if code == 409 {
+				c.JSON(code, "Conflict")
+			} else if code == 404 {
+				c.JSON(code, "Not found")
 			} else {
 				c.JSON(code, "Bad request")
 			}
@@ -78,9 +89,13 @@ func HandleRequests() {
 			res := orase.PutOras(c)
 			if res == 200 {
 				c.JSON(res, "City updated")
+			} else if res == 409 {
+				c.JSON(res, "Conflict")
+			} else if res == 404 {
+				c.JSON(res, "Not found")
 			} else {
 				c.JSON(res, "Bad request")
-			}	
+			}
 		} else {
 			c.JSON(400, "Bad request")
 		}
@@ -90,6 +105,8 @@ func HandleRequests() {
 		res := orase.DeleteOras(c)
 		if res == 200 {
 			c.JSON(res, "City deleted")
+		} else if res == 404 {
+			c.JSON(res, "Not found")
 		} else {
 			c.JSON(res, "Bad request")
 		}
@@ -112,6 +129,10 @@ func HandleRequests() {
 			res, code := temperaturi.PostTemperatura(c)
 			if res != -1 {
 				c.JSON(code, gin.H{"id": res})
+			} else if code == 409 {
+				c.JSON(code, "Conflict")
+			} else if code == 404 {
+				c.JSON(code, "Not found")
 			} else {
 				c.JSON(code, "Bad request")
 			}
@@ -125,6 +146,10 @@ func HandleRequests() {
 			res := temperaturi.PutTemperatura(c)
 			if res == 200 {
 				c.JSON(res, "Temperature updated")
+			} else if res == 409 {
+				c.JSON(res, "Conflict")
+			} else if res == 404 {
+				c.JSON(res, "Not found")
 			} else {
 				c.JSON(res, "Bad request")
 			}
@@ -137,6 +162,8 @@ func HandleRequests() {
 		res := temperaturi.DeleteTemperatura(c)
 		if res == 200 {
 			c.JSON(res, "Temperature deleted")
+		} else if res == 404 {
+			c.JSON(res, "Not found")
 		} else {
 			c.JSON(res, "Bad request")
 		}
