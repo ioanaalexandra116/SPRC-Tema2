@@ -1,7 +1,7 @@
 ## General Description
 This is an app for storing meteorological data and for providing information based on geographical specifications.
 
-## Architecture:
+## Architecture
 - REST API (Golang)
 - Database (PostgreSQL)
 - web-based GUI management application (pgAdmin 4)
@@ -18,6 +18,10 @@ DB_USER="<your-database-user>"
 DB_PASSWORD="<your-database-password>"
 DB_NAME="<your-database-name>"
 ```
+## Docker services
+- postgres (port 5432)
+- pgadmin (port 8001)
+- go-api (port 6000)
 
 ## How to run
 

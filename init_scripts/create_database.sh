@@ -1,5 +1,4 @@
 #!/bin/bash
-PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "ALTER SYSTEM SET max_connections = 500;"
 PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "
                                      -- PostgreSQL database dump
                                      --
@@ -142,3 +141,4 @@ PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "
                                     --
                                     -- PostgreSQL database dump complete
                                     --"
+PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "ALTER SYSTEM SET max_connections = 500;"
