@@ -371,7 +371,7 @@ func PutTemperatura(c *gin.Context) int {
 		}
 	}
 
-	insertStatement = "UPDATE temperaturi SET id_oras = $2, valoare = $3 WHERE id = $4"
+	insertStatement = "UPDATE temperaturi SET id_oras = $1, valoare = $2 WHERE id = $3"
 	if _, err := helpers.ExecuteStatement(database.Db, insertStatement, temperatura.IdOras, temperatura.Valoare, id); err != nil {
 		log.Println(err)
 		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
