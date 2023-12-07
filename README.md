@@ -2,19 +2,21 @@
 This is an app for storing meteorological data and for providing information based on geographical specifications.
 
 ## Architecture
-- REST API (Golang)
 - Database (PostgreSQL)
 - web-based GUI management application (pgAdmin 4)
-
-## Pre-requisites
--   [Golang](https://golang.org/dl/)
--   [Docker](https://docs.docker.com/engine/install/)
+- REST API (Golang)
 
 ## Docker services
 - postgres (port 5432)
 - pgadmin (port 8001: available [here](http://localhost:8001/))
     - connect with credentials admin@admin.com (Email Adress) and admin (Password) then add a new server and connect to your database using the data from your .env file
 - go-api (port 6000: you can send requests to http://localhost:6000/api)
+
+## Pre-requisites
+-   [Golang](https://golang.org/dl/)
+-   [Docker](https://docs.docker.com/engine/install/)
+
+## How to run
 
 You need to have a .env file with the following content:
 ```bash
@@ -24,13 +26,12 @@ DB_USER="admindb" # if you would like to use another username, change ownership 
 DB_PASSWORD="<your-database-password>"
 DB_NAME="<your-database-name>"
 ```
-
-## How to run
+! For convenience, I have included the file variables.env.
 
 ```bash
+export $(cat variables.env | xargs) # export env variables
 go mod init main # generate go.mod file
 go mod tidy # generate go.sum file
-source .env # export env variables
 docker compose -f docker-compose.yml up # run the app in a container
 docker compose -f docker-compose.yml down # shuts down the container but keeps the volumes
 docker compose -f docker-compose.yml down --volumes # shuts down the container and deletes the volumes (the database will be empty)

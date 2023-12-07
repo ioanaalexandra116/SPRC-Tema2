@@ -12,8 +12,8 @@ services:
       - postgres-data:/var/lib/postgresql/data
       - ./init_scripts:/docker-entrypoint-initdb.d
     networks:
-      - database-network
-      - communication-network
+      - api-network
+      - gui-network
 
   pgadmin: # pgadmin4
     image: dpage/pgadmin4
@@ -28,8 +28,7 @@ services:
     volumes:
       - pgadmin-data:/var/lib/pgadmin
     networks:
-      - database-network
-      - communication-network
+      - gui-network
   
   go-api:
     container_name: go-api
@@ -48,16 +47,13 @@ services:
       - postgres
     networks:
       - api-network
-      - communication-network
 
 volumes:
   postgres-data:
   pgadmin-data:
 
 networks:
-  database-network:
-    driver: bridge
   api-network:
-    driver: bridge
-  communication-network:
-    driver: bridge
+    name: api-network
+  gui-network:
+    name: gui-network
