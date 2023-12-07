@@ -1,5 +1,4 @@
 .vscode
-.direnv
-.envrc
-.mod
-.sum
+.env
+*.mod
+*.sum
