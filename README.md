@@ -12,8 +12,9 @@ This is an app for storing meteorological data and for providing information bas
 
 ## Docker services
 - postgres (port 5432)
-- pgadmin (port 8001)
-- go-api (port 6000)
+- pgadmin (port 8001: available [here](http://localhost:8001/))
+    - connect with credentials admin@admin.com (Email Adress) and admin (Password) then add a new server and connect to your database using the data from your .env file
+- go-api (port 6000: you can send requests to http://localhost:6000/api)
 
 You need to have a .env file with the following content:
 ```bash
