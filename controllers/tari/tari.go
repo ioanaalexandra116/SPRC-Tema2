@@ -93,6 +93,10 @@ func PutTara(c *gin.Context) int {
 		return 400
 	}
 
+	if id != tara_var.Id {
+		return 4090
+	}
+
 	var selectStatement string = "SELECT * FROM tari WHERE id = $1"
 	if rows, err := helpers.GetQueryResults(database.Db, selectStatement, id); err != nil {
 		log.Println(err)

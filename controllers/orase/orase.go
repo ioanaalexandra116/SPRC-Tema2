@@ -127,6 +127,19 @@ func PutOras(c *gin.Context) int {
 		return 400
 	}
 
+	if err := c.BindJSON(&oras_var); err != nil {
+		log.Println(err)
+		return 400
+	}
+
+	if oras_var.Nume == "" || oras_var.Lat == nil || oras_var.Lon == nil || oras_var.IdTara == 0 || oras_var.Id == 0 {
+		return 400
+	}
+
+	if id != oras_var.Id {
+		return 4090
+	}
+
 	var insertStatement string = "SELECT * FROM orase WHERE id = $1"
 	if rows, err := helpers.GetQueryResults(database.Db, insertStatement, id); err != nil {
 		log.Println(err)
@@ -135,15 +148,6 @@ func PutOras(c *gin.Context) int {
 		if !rows.Next() {
 			return 4040
 		}
-	}
-
-	if err := c.BindJSON(&oras_var); err != nil {
-		log.Println(err)
-		return 400
-	}
-
-	if oras_var.Nume == "" || oras_var.Lat == nil || oras_var.Lon == nil || oras_var.IdTara == 0 || oras_var.Id == 0 {
-		return 400
 	}
 
 	insertStatement = "SELECT * FROM tari WHERE id = $1"

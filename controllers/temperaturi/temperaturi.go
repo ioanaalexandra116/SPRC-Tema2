@@ -338,6 +338,19 @@ func PutTemperatura(c *gin.Context) int {
 		return 400
 	}
 
+	if err := c.BindJSON(&temperatura); err != nil {
+		log.Println(err)
+		return 400
+	}
+
+	if temperatura.IdOras == 0 || temperatura.Valoare == nil || temperatura.Id == 0 {
+		return 400
+	}
+
+	if temperatura.Id != id {
+		return 4090
+	}
+
 	var insertStatement string = "SELECT * FROM temperaturi WHERE id = $1"
 	if rows, err := helpers.GetQueryResults(database.Db, insertStatement, id); err != nil {
 		log.Println(err)
@@ -346,15 +359,6 @@ func PutTemperatura(c *gin.Context) int {
 		if !rows.Next() {
 			return 4040
 		}
-	}
-
-	if err := c.BindJSON(&temperatura); err != nil {
-		log.Println(err)
-		return 400
-	}
-
-	if temperatura.IdOras == 0 || temperatura.Valoare == nil || temperatura.Id == 0 {
-		return 400
 	}
 
 	insertStatement = "SELECT * FROM orase WHERE id = $1"

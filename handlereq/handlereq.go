@@ -40,6 +40,10 @@ func HandleRequests() {
 				c.JSON(res, "Country updated")
 			} else if res == 409 {
 				c.JSON(res, "There is already a country with this name")
+			} else if res == 4090 {
+				c.JSON(409, "The id you provided in the url is different from the one in the body")
+			} else if res == 404 {
+				c.JSON(res, "There is no country with this id")
 			} else {
 				c.JSON(res, "Make sure you have all the fields filled with the right type of data and properly named")
 			}
@@ -93,6 +97,8 @@ func HandleRequests() {
 				c.JSON(res, "There is already a city with this name in this country")
 			} else if res == 404 {
 				c.JSON(res, "There is no country with this id")
+			} else if res == 4090 {
+				c.JSON(409, "The id you provided in the url is different from the one in the body")
 			} else if res == 4040 {
 				c.JSON(404, "There is no city with this id")
 			} else {
@@ -150,6 +156,8 @@ func HandleRequests() {
 				c.JSON(res, "Temperature updated")
 			} else if res == 409 {
 				c.JSON(res, "There is already a temperature with this timestamp in this city")
+			} else if res == 4090 {
+				c.JSON(409, "The id you provided in the url is different from the one in the body")
 			} else if res == 404 {
 				c.JSON(res, "There is no city with this id")
 			} else if res == 4040 {
