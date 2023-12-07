@@ -10,26 +10,29 @@ This is an app for storing meteorological data and for providing information bas
 -   [Golang](https://golang.org/dl/)
 -   [Docker](https://docs.docker.com/engine/install/)
 
-You need to have a .env file with the following content:
-```bash
-DB_HOST="<your-database-host>"
-DB_PORT="<your-database-port>"
-DB_USER="<your-database-user>"
-DB_PASSWORD="<your-database-password>"
-DB_NAME="<your-database-name>"
-```
 ## Docker services
 - postgres (port 5432)
 - pgadmin (port 8001)
 - go-api (port 6000)
 
+You need to have a .env file with the following content:
+```bash
+DB_HOST="postgres" # db container name
+DB_PORT="5432"
+DB_USER="admindb" # if you would like to use another username, change ownership related statements in ./init_scripts/create_database.sh
+DB_PASSWORD="<your-database-password>"
+DB_NAME="<your-database-name>"
+```
+
 ## How to run
 
 ```bash
-source .env #export env variables
+go mod init main # generate go.mod file
+go mod tidy # generate go.sum file
+source .env # export env variables
 docker compose -f docker-compose.yml up # run the app in a container
-docker compose -f docker-compose.yml up # shuts down the container but keeps the volumes
-docker compose -f docker-compose.yml up --volumes # shuts down the container and deletes the volumes (the database will be empty)
+docker compose -f docker-compose.yml down # shuts down the container but keeps the volumes
+docker compose -f docker-compose.yml down --volumes # shuts down the container and deletes the volumes (the database will be empty)
 ```
 
 ## Features (what you can do)

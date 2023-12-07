@@ -1,3 +1,5 @@
 .vscode
 .direnv
 .envrc
+.mod
+.sum
