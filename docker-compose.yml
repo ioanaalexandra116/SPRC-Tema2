@@ -1,7 +1,10 @@
 version: "3.1"
 services:
   postgres: # postgresql
+    container_name: postgres
     image: postgres:13
+    env_file:
+      - .env
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -16,6 +19,7 @@ services:
       - gui-network
 
   pgadmin: # pgadmin4
+    container_name: pgadmin
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
@@ -30,17 +34,13 @@ services:
     networks:
       - gui-network
   
-  go-api:
+  go-api: # go-api
     container_name: go-api
+    env_file:
+      - .env
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
     ports:
       - "6000:6000"
     depends_on:
